@@ -106,6 +106,30 @@ public class ExampleController {
 
         return response;
     }
+    
+    /**
+     * 이미지 단건 발송 mms
+     */
+    @PostMapping("/sendimg")
+    public SingleMessageSentResponse sendOneCti() throws IOException {
+        ClassPathResource resource = new ClassPathResource("static/cti.jpg");
+        File file = resource.getFile();
+        // 이미지 크기는 가로 500px 세로 250px 이상이어야 합니다, 링크도 필수로 기입해주세요.
+        String imageId = this.messageService.uploadFile(file, StorageType.MMS, "https://example.com");
+
+        Message message = new Message();
+        // 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
+        message.setFrom("발신번호 입력");
+        message.setTo("수신번호 입력");
+        message.setText("테스트"); 
+        message.setImageId(imageId);
+
+        SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
+        System.out.println(response);
+
+        return response;
+    }
+
 
     /**
      * MMS 발송 예제
